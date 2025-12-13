@@ -1,0 +1,480 @@
+================================================================================
+IMPLEMENTATION PLAN: FIFO Queue Vocabulary Storage with Configurable Sampling
+================================================================================
+
+Project: WaniKani Review Story Generator
+Version: 4.1 → 5.0
+Date: December 11, 2025
+
+================================================================================
+OVERVIEW
+================================================================================
+
+Transform the current session-based vocabulary storage (collect → generate → 
+clear) into a persistent FIFO queue system that:
+
+1. Maintains a configurable-length queue of vocabulary words
+2. Groups words by date (calendar day) rather than review sessions
+3. Selects the N most recent words for story generation
+4. Always includes all words from the current day (minimum threshold)
+5. Optionally supports random sampling from entire queue for variety
+6. Provides visualization of queue contents in settings
+
+Key Design Decisions:
+- Date-based clustering (not session-based) for natural grouping
+- FIFO eviction when queue reaches capacity
+- Minimum guarantee: all words from current day included in stories
+- No migration logic needed (development phase)
+
+================================================================================
+TASK BREAKDOWN
+================================================================================
+
+--------------------------------------------------------------------------------
+TASK 1: Implement FIFO Queue Storage Structure ✓ COMPLETED
+--------------------------------------------------------------------------------
+
+Location: Lines 212-224 (storage helpers) + 254-338 (collection logic)
+
+Current State:
+- localStorage stores simple array: ["単語", "勉強", "日本語"]
+- Cleared after each story generation
+- No metadata tracking
+
+New Structure:
+```javascript
+{
+  version: 1,                    // Schema version for future migrations
+  queue: [
+    {
+      word: "単語",              // Japanese vocabulary word
+      date: "2025-12-11",        // ISO date string (YYYY-MM-DD)
+      timestamp: 1702252800000   // Unix timestamp for ordering
+    },
+    // ... more items
+  ],
+  stats: {
+    totalCollected: 150,         // Lifetime total (informational)
+    oldestDate: "2025-12-01",   // For visualization
+    newestDate: "2025-12-11"    // For visualization
+  }
+}
+```
+
+Changes Required:
+
+A. Update Storage Helpers (lines 212-224):
+   - loadStoredVocab(): Parse new structure, return queue array, handle legacy
+   - storeVocab(): Accept metadata, construct full structure, enforce capacity
+   - clearStoredVocab(): Keep function for compatibility (clears entire queue)
+   - Add: enforceQueueCapacity(queue, maxSize) - FIFO eviction logic
+   - Add: getQueueStats() - Calculate and return stats object
+
+B. Update Collection Logic (lines 254-338):
+   - Change vocabSet initialization to load queue and extract unique words
+   - In didAnswerQuestion handler (line 305):
+     * Create vocab object with word, current date (YYYY-MM-DD), timestamp
+     * Check if word already exists (by word property, not simple Set)
+     * Add to queue structure, not simple Set
+     * Call storeVocab with full queue structure
+   - In didCompleteSession handler (line 335):
+     * No longer needed to mark session boundary (using dates instead)
+     * Keep for compatibility but just call storeVocab
+
+C. Date Handling:
+   - Add utility: getCurrentDate() returns "YYYY-MM-DD" string
+   - Add utility: getDateFromTimestamp(ts) for consistency
+   - Use consistent timezone handling (user's local time)
+
+Success Criteria:
+- Vocabulary stored with date metadata
+- Queue automatically evicts oldest items when capacity exceeded
+- No duplicates within queue (check by word string)
+- Stats tracked for visualization
+
+--------------------------------------------------------------------------------
+TASK 2: Add Queue Configuration Settings ✓ COMPLETED
+--------------------------------------------------------------------------------
+
+Location: Lines 133-201 (existing settings) + 1232-1601 (settings UI)
+
+New Settings:
+
+A. Storage Keys & Defaults:
+   - wk_story_queue_capacity: 100 (range: 20-500)
+   - wk_story_words_per_story: 20 (range: 5-100)
+   - wk_story_sampling_mode: "recent" (values: "recent" | "random")
+
+B. Getter/Setter Functions (follow pattern at lines 151-201):
+   - getQueueCapacity() / setQueueCapacity(value)
+     * Validate: 20 ≤ value ≤ 500
+     * On decrease: trigger queue trimming if current size > new capacity
+   - getWordsPerStory() / setWordsPerStory(value)
+     * Validate: 5 ≤ value ≤ 100
+   - getSamplingMode() / setSamplingMode(value)
+     * Validate: "recent" or "random"
+
+C. Settings UI Updates (in openSettingsOverlay):
+   - Add new section: "Vocabulary Queue" (between Story and Audio sections)
+   - Section contents:
+     * Queue capacity: numeric input with range validation + helper text
+     * Words per story: numeric input with range validation + helper text
+     * Sampling mode: radio buttons ("Recent words" vs "Random mix")
+     * Queue visualization: collapsible section (see Task 6)
+   - Use existing UI patterns:
+     * createSectionHeading() helper (line 1283)
+     * createLabel() helper (line 1292)
+     * Container divs with marginBottom: "20px"
+     * Focus states with #0074e9 border
+   - Save button handler: add new settings to save logic (line 1548)
+
+Helper Text Examples:
+- Capacity: "Maximum vocabulary words to keep in queue (20-500)"
+- Words per story: "Number of words to use when generating stories (5-100)"
+- Sampling: "Recent: Use newest words | Random: Mix old and new for review"
+
+Success Criteria:
+- Settings persist across sessions
+- Validation prevents invalid values
+- UI matches existing design patterns
+- Changing capacity triggers queue adjustment if needed
+
+--------------------------------------------------------------------------------
+TASK 3: Implement Vocabulary Selection Logic ✓ COMPLETED
+--------------------------------------------------------------------------------
+
+Location: New functions + updates to lines 441-573 (generateStory)
+
+New Functions:
+
+A. selectVocabularyForStory(queue, wordsPerStory, samplingMode)
+   Parameters:
+   - queue: Full queue array from storage
+   - wordsPerStory: Number of words to select
+   - samplingMode: "recent" or "random"
+   
+   Returns:
+   - Array of vocabulary strings for story generation
+   
+   Logic:
+   1. Get current date (YYYY-MM-DD)
+   2. Filter queue for today's words → todayWords[]
+   3. If samplingMode === "recent":
+      a. Sort queue by timestamp descending (newest first)
+      b. Take first wordsPerStory items
+      c. If count < todayWords.length, use all todayWords instead
+      d. Extract word strings and return
+   4. If samplingMode === "random":
+      a. Separate queue into today vs older
+      b. Select random words from older queue
+      c. Always include ALL todayWords (minimum guarantee)
+      d. Fill remaining slots randomly from older words if needed
+      e. If todayWords.length ≥ wordsPerStory, use only todayWords
+      f. Return combined array
+   5. Deduplicate final array (safety check)
+
+B. getSelectionStats(queue, selectedWords)
+   Returns object with:
+   - totalInQueue: queue.length
+   - selectedCount: selectedWords.length
+   - todayCount: count of words from today
+   - dateRange: "Dec 1 - Dec 11" (formatted)
+   - samplingMode: current mode
+   
+   Used for UI display and logging
+
+C. Update generateStory Function (line 441):
+   Current signature: generateStory(vocab, button = null)
+   New approach:
+   - Remove vocab parameter
+   - Load queue from storage inside function
+   - Get wordsPerStory and samplingMode from settings
+   - Call selectVocabularyForStory() to get vocab array
+   - Log selection stats for debugging
+   - Continue with existing prompt substitution logic
+   - DO NOT clear storage after story generation (queue persists)
+
+Success Criteria:
+- Recent mode: newest N words selected
+- Random mode: today's words + random older words
+- Minimum threshold: all today's words always included
+- No crashes if queue smaller than wordsPerStory
+- Selection stats logged for verification
+
+--------------------------------------------------------------------------------
+TASK 4: Update Dashboard UI to Show Queue Status ✓ COMPLETED
+--------------------------------------------------------------------------------
+
+Location: Lines 344-416 (dashboard initialization) + 378-395 (button creation)
+
+Changes:
+
+A. Update insertDashboardButton (line 378):
+   Current button text: "Generate Story (X words)"
+   New button text format:
+   - If queue has words: "Generate Story (20 from 85 words)"
+     * 20 = words to be selected (wordsPerStory setting)
+     * 85 = total words in queue
+   - If queue empty: "Generate Story (no words yet)"
+   - If queue < wordsPerStory: "Generate Story (5 of 5 words)"
+     * Adjust selection to queue size
+
+B. Visual Indicators:
+   - Add capacity indicator below button (small text):
+     * "Queue: 85/100 words" with color coding:
+       - Green: < 80% full
+       - Yellow: 80-95% full  
+       - Red: 95-100% full
+   - Add date range indicator:
+     * "Words from: Dec 1 - Dec 11"
+   - Style: small font (11px), muted color, padding below button
+
+C. Update resetButtonState (line 429):
+   - Accept additional parameters for queue stats
+   - Update button text with current queue count
+   - Refresh after each story generation (queue still full)
+
+D. Button Click Handler:
+   - Remove vocab parameter from generateStory call (line 388)
+   - Function now loads queue internally
+
+E. Early Exit Logic (line 351):
+   - Change condition: if queue has no words from today, show message
+   - "Complete a review session to collect vocabulary for stories"
+   - Allow button to show queue status even if no recent reviews
+
+Success Criteria:
+- Button shows selection/total word counts
+- Capacity indicator with color coding
+- Date range displayed
+- Updates correctly after story generation
+- Handles edge cases (empty queue, small queue)
+
+--------------------------------------------------------------------------------
+TASK 5: Implement Random Sampling Mode
+--------------------------------------------------------------------------------
+
+Location: New function + integration into Task 3 logic
+
+Implementation:
+
+A. Random Selection Algorithm (in selectVocabularyForStory):
+   ```
+   function selectRandomWords(queue, count, excludeWords):
+     1. Filter queue to remove today's words (already guaranteed)
+     2. Shuffle remaining words using Fisher-Yates algorithm
+     3. Take first 'count' items from shuffled array
+     4. Return selected words
+   ```
+
+B. Integration with Selection Logic:
+   - If samplingMode === "random":
+     1. Get all today's words (mandatory inclusion)
+     2. Calculate remaining slots: wordsPerStory - todayWords.length
+     3. If remaining > 0, call selectRandomWords for older vocabulary
+     4. Combine todayWords + randomOlderWords
+     5. If remaining ≤ 0, return only todayWords
+   - Ensure no duplicates in final array
+
+C. Settings UI Toggle (from Task 2):
+   - Radio button group:
+     ```
+     ○ Recent Words (newest vocabulary)
+     ○ Random Mix (review older + new words)
+     ```
+   - Helper text explaining each mode
+   - Default: "Recent Words"
+
+D. Logging & Debugging:
+   - Log sampling mode used for each generation
+   - Log breakdown: "Story uses 15 recent + 5 random older words"
+   - Log date distribution in selection for verification
+
+Success Criteria:
+- Random mode selects from entire queue
+- Today's words always included (non-negotiable)
+- True randomness (not just newest words shuffled)
+- No bias toward any date range (uniform distribution)
+- Mode selection persists across sessions
+
+--------------------------------------------------------------------------------
+TASK 6: Add Queue Visualization & Management
+--------------------------------------------------------------------------------
+
+Location: Settings overlay (lines 1232-1601), new section in scrollArea
+
+Visualization Features:
+
+A. Queue Contents Display:
+   - Collapsible section in "Vocabulary Queue" settings section
+   - Header: "View Queue Contents" with expand/collapse icon
+   - When expanded, show scrollable list (max-height: 300px):
+     * Group words by date (expandable groups)
+     * Each date shows: "Dec 11, 2025 (12 words)"
+     * Expanding date shows word list with remove buttons
+   - Format:
+     ```
+     ▼ December 11, 2025 (12 words)
+       • 単語 [×]
+       • 勉強 [×]
+       • 日本語 [×]
+     ▼ December 10, 2025 (8 words)
+       • 学校 [×]
+       ...
+     ```
+
+B. Queue Statistics Display:
+   - Summary box at top of section:
+     * Total words in queue: 85/100
+     * Date range: Dec 1 - Dec 11, 2025
+     * Oldest word: 10 days ago
+     * Total collected (lifetime): 247 words
+   - Visual progress bar for capacity utilization
+   - Color coded (green/yellow/red) based on fullness
+
+C. Management Actions:
+   - "Clear Entire Queue" button:
+     * Red/destructive styling
+     * Confirmation dialog: "Are you sure? This will delete all X words."
+     * Clears queue but preserves settings
+   - Individual word removal:
+     * [×] button next to each word in visualization
+     * Removes word from queue, updates display
+     * No confirmation (quick action)
+   - "Export Queue" button:
+     * Downloads JSON file with queue data
+     * Filename: "wanikani-vocab-queue-YYYY-MM-DD.json"
+   - "Import Queue" button:
+     * File input to load previously exported queue
+     * Validates structure before importing
+     * Merges with existing queue (no duplicates)
+
+D. UI Implementation Details:
+   - Use existing collapsible pattern from story overlay
+   - Font Awesome icons: fa-chevron-down/up for expand/collapse
+   - Hover effects on word items
+   - Smooth transitions for expand/collapse
+   - Responsive scrolling for long lists
+   - Date groups collapsed by default, expand on click
+
+E. Real-time Updates:
+   - Refresh button to reload queue from storage
+   - Auto-refresh after deletions
+   - Show "Queue updated" confirmation message
+
+Success Criteria:
+- All queue contents visible and organized by date
+- Individual word removal works correctly
+- Clear queue with confirmation prevents accidents
+- Export/import preserves queue structure
+- Statistics display accurate information
+- UI matches existing design aesthetic
+- Smooth interactions (no jank)
+
+--------------------------------------------------------------------------------
+TASK 7: Testing & Edge Cases
+--------------------------------------------------------------------------------
+
+Test Scenarios:
+
+A. Queue Capacity Enforcement:
+   - Fill queue to capacity, verify oldest words evicted
+   - Change capacity setting from 100 to 50, verify trimming
+   - Try to add words when at capacity, verify FIFO behavior
+
+B. Date Boundary Handling:
+   - Collect words late at night, verify date clustering
+   - Test across midnight boundary (11:59 PM → 12:01 AM)
+   - Verify timezone consistency
+
+C. Selection Logic:
+   - Empty queue: graceful handling, informative message
+   - Queue smaller than wordsPerStory: use all available
+   - Only today's words: should work normally
+   - No today's words: use recent words only (no crash)
+
+D. Random Sampling:
+   - Verify today's words always included
+   - Check randomness with repeated generations
+   - Test with queue size < wordsPerStory in random mode
+
+E. UI Updates:
+   - Button text updates after story generation
+   - Capacity indicator color changes correctly
+   - Queue visualization reflects actual storage
+   - Settings save and load correctly
+
+F. Storage Migration:
+   - Old format in localStorage: handle gracefully (ignore or convert)
+   - Corrupt data: fallback to empty queue
+   - Version mismatch: log warning, attempt recovery
+
+G. Performance:
+   - Large queue (500 words): UI remains responsive
+   - Rapid vocabulary collection: no race conditions
+   - Multiple browser tabs: storage conflicts handled
+
+Success Criteria:
+- All edge cases handled gracefully
+- No crashes or data loss
+- Clear error messages for users
+- Performance acceptable up to max capacity
+- Storage remains consistent across sessions
+
+================================================================================
+IMPLEMENTATION ORDER
+================================================================================
+
+Recommended sequence (dependencies considered):
+
+1. TASK 1 → Storage structure (foundation for everything else)
+2. TASK 2 → Settings (needed before selection logic uses them)
+3. TASK 3 → Selection logic (core functionality)
+4. TASK 4 → Dashboard UI (user-facing integration)
+5. TASK 5 → Random sampling (builds on Task 3)
+6. TASK 6 → Visualization (polish, can be done last)
+7. TASK 7 → Testing (after all features implemented)
+
+Alternative: Tasks 2 and 3 could be done in parallel if working efficiently.
+
+================================================================================
+TECHNICAL NOTES
+================================================================================
+
+Date Handling:
+- Use ISO 8601 format (YYYY-MM-DD) for consistency
+- Store timestamps as Unix milliseconds for precise ordering
+- Use Date.toLocaleDateString('en-CA') for YYYY-MM-DD format
+- Consistent timezone: user's local time (no UTC conversion needed)
+
+Performance Considerations:
+- Queue operations: O(n) for FIFO eviction, acceptable for max 500 items
+- Selection: O(n log n) for sorting in recent mode, O(n) for random
+- Storage: JSON.stringify/parse overhead minimal for typical queue sizes
+- UI rendering: Virtualize list if queue visualization becomes sluggish
+
+Code Style:
+- Follow existing patterns (inline styles, Font Awesome icons)
+- Maintain logging with [WK STORY] prefix
+- Use try/catch for all storage operations
+- Descriptive function names, JSDoc comments for new functions
+
+Version Bump:
+- Update @version from 4.1 to 5.0 in userscript header
+- Update description to mention "persistent vocabulary queue"
+
+================================================================================
+FUTURE ENHANCEMENTS (Out of Scope)
+================================================================================
+
+- Vocabulary difficulty scoring (prioritize harder words)
+- Multiple queue profiles (switch between different vocabulary sets)
+- Cloud sync across devices
+- Integration with WaniKani SRS levels (prioritize lower SRS items)
+- Story history tracking (avoid reusing same words too soon)
+- Spaced repetition scheduling for random sampling
+- Analytics dashboard (words learned over time, story generation frequency)
+
+================================================================================
+END OF PLAN
+================================================================================
