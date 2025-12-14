@@ -2,6 +2,7 @@
   "name": "wkstory",
   "version": "1.0.0",
   "description": "Tampermonkey script to generate AI stories on Wanikani.com",
+  "type": "module",
   "main": "dist/wkstory.user.js",
   "scripts": {
     "build:dev": "rollup -c",

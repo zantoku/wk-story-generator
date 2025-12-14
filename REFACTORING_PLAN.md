@@ -144,32 +144,30 @@
 - [x] Export `showStoryOverlay`
 
 ### 5.2 Create `src/ui-settings.js` (Settings Overlay)
-- [ ] Extract `openSettingsOverlay()` function (lines 1588-2052)
-- [ ] Import all storage getter/setter functions
-- [ ] Import queue functions (for capacity enforcement)
-- [ ] Import `log()` from `src/core.js`
-- [ ] Export `openSettingsOverlay`
+- [x] Extract `openSettingsOverlay()` function (lines 1588-2052)
+- [x] Import all storage getter/setter functions
+- [x] Import queue functions (for capacity enforcement)
+- [x] Import `log()` from `src/core.js`
+- [x] Export `openSettingsOverlay`
 
 ---
 
 ## Phase 6: Create Entry Point & Integration
 
 ### 6.1 Create `src/main.js` (Entry Point)
-- [ ] Import `loadFontAwesome()` from `src/core.js`
-- [ ] Import `observeUrlChanges()` and `handlePageChange()` from `src/navigation.js`
-- [ ] Import `initReviewPage()` from `src/review.js`
-- [ ] Import `initDashboardPage()` from `src/dashboard.js`
-- [ ] Export page initializers for navigation module
-- [ ] Add initialization code:
-  ```javascript
-  loadFontAwesome();
-  observeUrlChanges();
-  handlePageChange();
-  ```
-- [ ] Wrap in IIFE if needed for scope isolation
+- [x] Import `loadFontAwesome()` from `src/core.js`
+- [x] Import `observeUrlChanges()` and `handlePageChange()` from `src/navigation.js`
+- [x] Import `initReviewPage()` from `src/review.js`
+- [x] Import `initDashboardPage()` from `src/dashboard.js`
+- [x] Import `generateStory()` from `src/api.js`
+- [x] Import `showStoryOverlay()` from `src/ui-story.js`
+- [x] Import `openSettingsOverlay()` from `src/ui-settings.js`
+- [x] Register circular dependencies via callback functions
+- [x] Add GM_registerMenuCommand for settings
+- [x] Add initialization code (loadFontAwesome, observeUrlChanges, handlePageChange)
 
 ### 6.2 Create Tampermonkey Metadata
-- [ ] Create `meta.js` or configure in `rollup.config.js`:
+- [x] Configure metadata in `rollup.config.js`:
   ```javascript
   {
     name: 'WaniKani Review Story Generator',
@@ -187,10 +185,10 @@
 ## Phase 7: Testing & Validation
 
 ### 7.1 Build & Smoke Test
-- [ ] Run `npm run build:dev` (verify build completes)
-- [ ] Run `npm run build:prod` (verify minification works)
-- [ ] Check `dist/wkstory.user.js` has Tampermonkey header
-- [ ] Verify file size is reasonable (~30-40KB minified)
+- [x] Run `npm run build:dev` (verify build completes)
+- [x] Run `npm run build:prod` (verify minification works)
+- [x] Check `dist/wkstory.user.js` has Tampermonkey header
+- [x] Verify file size is reasonable (~30-40KB minified) - 39KB achieved
 
 ### 7.2 Functional Testing
 - [ ] Install bundled script in Tampermonkey

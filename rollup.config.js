@@ -30,12 +30,11 @@ export default {
   },
   plugins: [
     resolve(),
-    metablock({ file: './package.json', override: metadata }),
     ...(isProduction ? [terser({
       format: {
-        comments: /^!/,
-        preamble: '// WaniKani Review Story Generator v5.0'
+        comments: false // Remove all comments during minification
       }
-    })] : [])
+    })] : []),
+    metablock({ file: './package.json', override: metadata }) // Always add metablock last
   ]
 };
