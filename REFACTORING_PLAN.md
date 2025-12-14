@@ -41,10 +41,10 @@
 - [x] Set up output to `dist/wkstory.user.js`
 
 ### 1.3 Add Build Scripts
-- [ ] Add npm script: `build:dev` (development with source maps)
-- [ ] Add npm script: `build:prod` (production minified)
-- [ ] Add npm script: `build` (alias for `build:prod`)
-- [ ] Update `.gitignore` to exclude `node_modules/` and `dist/`
+- [x] Add npm script: `build:dev` (development with source maps)
+- [x] Add npm script: `build:prod` (production minified)
+- [x] Add npm script: `build` (alias for `build:prod`)
+- [x] Update `.gitignore` to exclude `node_modules/` and `dist/`
 
 ---
 

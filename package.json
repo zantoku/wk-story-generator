@@ -2,9 +2,11 @@
   "name": "wkstory",
   "version": "1.0.0",
   "description": "Tampermonkey script to generate AI stories on Wanikani.com",
-  "main": "wkstory.user.js",
+  "main": "dist/wkstory.user.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:dev": "rollup -c",
+    "build:prod": "NODE_ENV=production rollup -c",
+    "build": "npm run build:prod"
   },
   "keywords": [],
   "author": "",
