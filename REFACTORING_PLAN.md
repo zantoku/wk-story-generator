@@ -34,11 +34,11 @@
   ```
 
 ### 1.2 Configure Rollup
-- [ ] Create `rollup.config.js` with two builds:
-  - [ ] Development build (with inline source maps)
-  - [ ] Production build (minified)
-- [ ] Configure userscript metablock injection (preserve all `@grant` directives)
-- [ ] Set up output to `dist/wkstory.user.js`
+- [x] Create `rollup.config.js` with two builds:
+  - [x] Development build (with inline source maps)
+  - [x] Production build (minified)
+- [x] Configure userscript metablock injection (preserve all `@grant` directives)
+- [x] Set up output to `dist/wkstory.user.js`
 
 ### 1.3 Add Build Scripts
 - [ ] Add npm script: `build:dev` (development with source maps)
