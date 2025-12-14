@@ -16,18 +16,8 @@ import {
     log
 } from './core.js';
 
-// Import queue functions for capacity trimming (will be available after queue.js is created)
-// These will be imported later when needed
-let loadStoredVocab, storeVocab;
-
-/**
- * Set queue function references (to avoid circular dependencies)
- * This should be called from queue.js after it's loaded
- */
-export function setQueueFunctions(loadFn, storeFn) {
-    loadStoredVocab = loadFn;
-    storeVocab = storeFn;
-}
+// Import queue functions - note: these are imported to use, not for circular dependency
+import { loadStoredVocab, storeVocab } from './queue.js';
 
 // ---------------------------------------------------------------------
 // API Key Storage
@@ -208,12 +198,10 @@ export function setQueueCapacity(value) {
             GM_setValue(QUEUE_CAPACITY_STORAGE, clamped);
             
             // Trigger queue trimming if current size exceeds new capacity
-            if (loadStoredVocab && storeVocab) {
-                const queueData = loadStoredVocab();
-                if (queueData.queue.length > clamped) {
-                    log(`Queue capacity reduced to ${clamped}, trimming queue from ${queueData.queue.length} items`);
-                    storeVocab(queueData, clamped);
-                }
+            const queueData = loadStoredVocab();
+            if (queueData.queue.length > clamped) {
+                log(`Queue capacity reduced to ${clamped}, trimming queue from ${queueData.queue.length} items`);
+                storeVocab(queueData, clamped);
             }
         }
     } catch (_) {}

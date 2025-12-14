@@ -71,17 +71,17 @@
 - [x] Export all storage functions
 
 ### 2.3 Create `src/queue.js` (FIFO Queue Logic)
-- [ ] Extract date utilities (lines 298-305):
-  - [ ] `getTodayDateString()`
-  - [ ] `timestampToDateString()`
-- [ ] Extract `loadQueue()` function (lines 310-330)
-- [ ] Extract `evictOldestWords()` helper (lines 332-343)
-- [ ] Extract `calculateQueueStats()` helper (lines 345-361)
-- [ ] Extract `saveQueue()` function (lines 363-382)
-- [ ] Extract `clearQueue()` function (lines 384-387)
-- [ ] Extract `selectVocabularyForStory()` function (lines 677-738)
-- [ ] Extract `getSelectionStats()` function (lines 740-774)
-- [ ] Export all queue functions
+- [x] Extract date utilities (lines 298-305):
+  - [x] `getTodayDateString()`
+  - [x] `timestampToDateString()`
+- [x] Extract `loadQueue()` function (lines 310-330)
+- [x] Extract `evictOldestWords()` helper (lines 332-343)
+- [x] Extract `calculateQueueStats()` helper (lines 345-361)
+- [x] Extract `saveQueue()` function (lines 363-382)
+- [x] Extract `clearQueue()` function (lines 384-387)
+- [x] Extract `selectVocabularyForStory()` function (lines 677-738)
+- [x] Extract `getSelectionStats()` function (lines 740-774)
+- [x] Export all queue functions
 
 ---
 
