@@ -103,16 +103,16 @@
 - [x] Export `initReviewPage`
 
 ### 3.3 Create `src/dashboard.js` (Dashboard UI)
-- [ ] Extract `initDashboardPage()` function (lines 543-552)
-- [ ] Extract `getStatsElement()` helper (lines 554-572)
-- [ ] Extract `createGenerateButton()` function (lines 574-652)
-- [ ] Extract button state management (lines 783-806):
-  - [ ] `setButtonLoading()`
-  - [ ] `resetButtonState()`
-- [ ] Import queue and storage functions
-- [ ] Import `generateStory()` from `src/api.js` (forward reference)
-- [ ] Import `openSettingsOverlay()` from `src/ui-settings.js` (forward reference)
-- [ ] Export `initDashboardPage`
+- [x] Extract `initDashboardPage()` function (lines 543-552)
+- [x] Extract `getStatsElement()` helper (lines 554-572)
+- [x] Extract `createGenerateButton()` function (lines 574-652)
+- [x] Extract button state management (lines 783-806):
+  - [x] `setButtonLoading()`
+  - [x] `resetButtonState()`
+- [x] Import queue and storage functions
+- [x] Import `generateStory()` from `src/api.js` (forward reference)
+- [x] Import `openSettingsOverlay()` from `src/ui-settings.js` (forward reference)
+- [x] Export `initDashboardPage`
 
 ---
 
