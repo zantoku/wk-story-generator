@@ -94,13 +94,13 @@
 - [x] Export navigation functions
 
 ### 3.2 Create `src/review.js` (Review Page Logic)
-- [ ] Extract `initReviewPage()` main function (lines 430-538)
-- [ ] Extract `loadQueueFromStorage()` helper (lines 442-449)
-- [ ] Extract `extractVocabFromQueue()` helper (lines 451-468)
-- [ ] Extract `getQueueElement()` helper (lines 470-481)
-- [ ] Import queue functions from `src/queue.js`
-- [ ] Import storage functions from `src/storage.js`
-- [ ] Export `initReviewPage`
+- [x] Extract `initReviewPage()` main function (lines 430-538)
+- [x] Extract `loadQueueFromStorage()` helper (lines 442-449)
+- [x] Extract `extractVocabFromQueue()` helper (lines 451-468)
+- [x] Extract `getQueueElement()` helper (lines 470-481)
+- [x] Import queue functions from `src/queue.js`
+- [x] Import storage functions from `src/storage.js`
+- [x] Export `initReviewPage`
 
 ### 3.3 Create `src/dashboard.js` (Dashboard UI)
 - [ ] Extract `initDashboardPage()` function (lines 543-552)
