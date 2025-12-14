@@ -119,18 +119,18 @@
 ## Phase 4: Extract API & Audio Modules
 
 ### 4.1 Create `src/api.js` (OpenAI API Calls)
-- [ ] Extract `generateStory()` function (lines 811-941)
-- [ ] Import queue selection functions
-- [ ] Import storage functions (API key, prompt)
-- [ ] Import `showStoryOverlay()` from `src/ui-story.js` (forward reference)
-- [ ] Import button state management from `src/dashboard.js`
-- [ ] Export `generateStory`
+- [x] Extract `generateStory()` function (lines 811-941)
+- [x] Import queue selection functions
+- [x] Import storage functions (API key, prompt)
+- [x] Import `showStoryOverlay()` from `src/ui-story.js` (forward reference)
+- [x] Import button state management from `src/dashboard.js`
+- [x] Export `generateStory`
 
 ### 4.2 Create `src/audio.js` (TTS Generation)
-- [ ] Extract `generateAudio()` function (lines 946-1017)
-- [ ] Import storage functions (TTS settings)
-- [ ] Import `log()` from `src/core.js`
-- [ ] Export `generateAudio`
+- [x] Extract `generateAudio()` function (lines 946-1017)
+- [x] Import storage functions (TTS settings)
+- [x] Import `log()` from `src/core.js`
+- [x] Export `generateAudio`
 
 ---
 
