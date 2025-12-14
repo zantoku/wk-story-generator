@@ -137,11 +137,11 @@
 ## Phase 5: Extract UI Modules
 
 ### 5.1 Create `src/ui-story.js` (Story Overlay)
-- [ ] Extract `showStoryOverlay()` function (lines 1022-1583)
-- [ ] Import `generateAudio()` from `src/audio.js`
-- [ ] Import storage functions for TTS settings
-- [ ] Manage audio state (`currentAudioBlob`, `currentAudioUrl`, `audioElement`)
-- [ ] Export `showStoryOverlay`
+- [x] Extract `showStoryOverlay()` function (lines 1022-1583)
+- [x] Import `generateAudio()` from `src/audio.js`
+- [x] Import storage functions for TTS settings
+- [x] Manage audio state (`currentAudioBlob`, `currentAudioUrl`, `audioElement`)
+- [x] Export `showStoryOverlay`
 
 ### 5.2 Create `src/ui-settings.js` (Settings Overlay)
 - [ ] Extract `openSettingsOverlay()` function (lines 1588-2052)
