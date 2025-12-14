@@ -60,15 +60,15 @@
 - [x] Export all constants and utilities
 
 ### 2.2 Create `src/storage.js` (Storage Management)
-- [ ] Extract API key getter/setter (lines 37-52)
-- [ ] Extract custom prompt getter/setter (lines 117-138)
-- [ ] Extract queue capacity getter/setter (lines 168-183)
-- [ ] Extract words per story getter/setter (lines 185-200)
-- [ ] Extract sampling mode getter/setter (lines 202-217)
-- [ ] Extract TTS voice getter/setter (lines 219-234)
-- [ ] Extract TTS instructions getter/setter (lines 236-260)
-- [ ] Extract TTS speed getter/setter (lines 262-283)
-- [ ] Export all storage functions
+- [x] Extract API key getter/setter (lines 37-52)
+- [x] Extract custom prompt getter/setter (lines 117-138)
+- [x] Extract queue capacity getter/setter (lines 168-183)
+- [x] Extract words per story getter/setter (lines 185-200)
+- [x] Extract sampling mode getter/setter (lines 202-217)
+- [x] Extract TTS voice getter/setter (lines 219-234)
+- [x] Extract TTS instructions getter/setter (lines 236-260)
+- [x] Extract TTS speed getter/setter (lines 262-283)
+- [x] Export all storage functions
 
 ### 2.3 Create `src/queue.js` (FIFO Queue Logic)
 - [ ] Extract date utilities (lines 298-305):
