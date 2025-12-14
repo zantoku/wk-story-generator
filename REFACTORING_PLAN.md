@@ -51,13 +51,13 @@
 ## Phase 2: Extract Core Modules
 
 ### 2.1 Create `src/core.js` (Constants & Configuration)
-- [ ] Extract all storage key constants (lines 15-17, 143-145, 207-209)
-- [ ] Extract `STORY_SCHEMA` constant (lines 58-90)
-- [ ] Extract `DEFAULT_PROMPT` (lines 92-140)
-- [ ] Extract `DEFAULT_TTS_INSTRUCTIONS` (lines 152-166)
-- [ ] Extract `log()` utility function (line 23)
-- [ ] Add `loadFontAwesome()` function (lines 26-34)
-- [ ] Export all constants and utilities
+- [x] Extract all storage key constants (lines 15-17, 143-145, 207-209)
+- [x] Extract `STORY_SCHEMA` constant (lines 58-90)
+- [x] Extract `DEFAULT_PROMPT` (lines 92-140)
+- [x] Extract `DEFAULT_TTS_INSTRUCTIONS` (lines 152-166)
+- [x] Extract `log()` utility function (line 23)
+- [x] Add `loadFontAwesome()` function (lines 26-34)
+- [x] Export all constants and utilities
 
 ### 2.2 Create `src/storage.js` (Storage Management)
 - [ ] Extract API key getter/setter (lines 37-52)
