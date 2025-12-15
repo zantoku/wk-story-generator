@@ -1,13 +1,15 @@
 {
   "name": "wkstory",
-  "version": "1.0.0",
+  "version": "5.0.0",
   "description": "Tampermonkey script to generate AI stories on Wanikani.com",
   "type": "module",
   "main": "dist/wkstory.user.js",
   "scripts": {
     "build:dev": "rollup -c",
     "build:prod": "NODE_ENV=production rollup -c",
-    "build": "npm run build:prod"
+    "build": "npm run build:prod",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +17,7 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^0.4.4",
+    "eslint": "^9.39.2",
     "rollup": "^4.53.3",
     "rollup-plugin-userscript-metablock": "^0.4.3"
   }

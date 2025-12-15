@@ -45,19 +45,19 @@ export function observeUrlChanges() {
  */
 export function handlePageChange() {
     const path = location.pathname;
-    log("handlePageChange:", path);
+    log('handlePageChange:', path);
 
-    if (path.startsWith("/subjects/review")) {
+    if (path.startsWith('/subjects/review')) {
         if (initReviewPage) {
             initReviewPage();
         } else {
-            log("Review page initializer not registered yet");
+            log('Review page initializer not registered yet');
         }
-    } else if (path === "/dashboard" || path === "/") {
+    } else if (path === '/dashboard' || path === '/') {
         if (initDashboardPage) {
             initDashboardPage();
         } else {
-            log("Dashboard page initializer not registered yet");
+            log('Dashboard page initializer not registered yet');
         }
     }
 }

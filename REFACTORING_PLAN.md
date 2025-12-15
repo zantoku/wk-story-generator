@@ -191,29 +191,29 @@
 - [x] Verify file size is reasonable (~30-40KB minified) - 39KB achieved
 
 ### 7.2 Functional Testing
-- [ ] Install bundled script in Tampermonkey
-- [ ] Test review page:
-  - [ ] Vocabulary collection during reviews
-  - [ ] FIFO queue storage in localStorage
-  - [ ] Duplicate detection
-- [ ] Test dashboard page:
-  - [ ] Button displays correct counts
-  - [ ] Capacity indicator shows correct color
-  - [ ] Date range displays properly
-- [ ] Test story generation:
-  - [ ] API call succeeds with valid key
-  - [ ] Story overlay displays correctly
-  - [ ] Japanese story, translation, vocabulary list all render
-- [ ] Test audio features:
-  - [ ] Audio generation with configured voice/speed
-  - [ ] Play/pause controls work
-  - [ ] Progress bar and seek work
-  - [ ] Download button creates MP3 file
-- [ ] Test settings:
-  - [ ] All settings save properly
-  - [ ] Queue capacity enforcement works
-  - [ ] Reset buttons restore defaults
-  - [ ] TTS voice/speed/instructions persist
+- [x] Install bundled script in Tampermonkey
+- [x] Test review page:
+  - [x] Vocabulary collection during reviews
+  - [x] FIFO queue storage in localStorage
+  - [x] Duplicate detection
+- [x] Test dashboard page:
+  - [x] Button displays correct counts
+  - [x] Capacity indicator shows correct color
+  - [x] Date range displays properly
+- [x] Test story generation:
+  - [x] API call succeeds with valid key
+  - [x] Story overlay displays correctly
+  - [x] Japanese story, translation, vocabulary list all render
+- [x] Test audio features:
+  - [x] Audio generation with configured voice/speed
+  - [x] Play/pause controls work
+  - [x] Progress bar and seek work
+  - [x] Download button creates MP3 file
+- [x] Test settings:
+  - [x] All settings save properly
+  - [x] Queue capacity enforcement works
+  - [x] Reset buttons restore defaults
+  - [x] TTS voice/speed/instructions persist
 
 ### 7.3 Edge Case Testing
 - [ ] Test with empty queue
@@ -229,15 +229,15 @@
 ## Phase 8: Documentation & Cleanup
 
 ### 8.1 Update Documentation
-- [ ] Update `README.md` with new build instructions
-- [ ] Add "Development" section explaining module structure
-- [ ] Document how to build from source
-- [ ] Update version number to 5.0 in all files
+- [x] Update `README.md` with new build instructions
+- [x] Add "Development" section explaining module structure
+- [x] Document how to build from source
+- [x] Update version number to 5.0 in all files
 
 ### 8.2 Final Cleanup
-- [ ] Remove original `wkstory.user.js` or move to `wkstory.user.js.backup`
-- [ ] Update `.gitignore` (add `node_modules/`, `dist/`, optionally `*.backup`)
-- [ ] Verify all console logs use `log()` utility
+- [x] Remove original `wkstory.user.js` or move to `wkstory.user.js.backup`
+- [x] Update `.gitignore` (add `node_modules/`, `dist/`, optionally `*.backup`)
+- [x] Verify all console logs use `log()` utility
 - [ ] Check for any hardcoded values that should be constants
 
 ### 8.3 Optional Enhancements

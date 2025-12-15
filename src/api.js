@@ -37,20 +37,20 @@ export function generateStory(vocab = null, button = null) {
     
     // Get and log selection stats
     const stats = getSelectionStats(queueData.queue, selectedVocab);
-    log("Story generation stats:", stats);
+    log('Story generation stats:', stats);
     log(`Using ${stats.selectedCount} words (${stats.todayCount} from today) via ${stats.samplingMode} mode`);
     
     if (selectedVocab.length === 0) {
-        alert("No vocabulary available to generate a story. Complete some reviews first!");
+        alert('No vocabulary available to generate a story. Complete some reviews first!');
         return;
     }
     
-    log("Selected vocabulary for story:", selectedVocab);
+    log('Selected vocabulary for story:', selectedVocab);
 
     const apiKey = getApiKey();
     if (!apiKey) {
         alert(
-            "No OpenAI API key configured for the WaniKani story generator.\n\n" +
+            'No OpenAI API key configured for the WaniKani story generator.\n\n' +
             "I'll open the settings panel so you can paste your key."
         );
         if (openSettingsOverlay) {
@@ -63,26 +63,26 @@ export function generateStory(vocab = null, button = null) {
 
     const promptTemplate = getPrompt();
     const prompt = promptTemplate
-        .replace('{{VOCAB}}', selectedVocab.join(", "))
+        .replace('{{VOCAB}}', selectedVocab.join(', '))
         .replace('{{COUNT}}', selectedVocab.length.toString());
 
     // Use Responses API with structured output for guaranteed JSON schema
-    fetch("https://api.openai.com/v1/responses", {
-        method: "POST",
+    fetch('https://api.openai.com/v1/responses', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + apiKey
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + apiKey
         },
         body: JSON.stringify({
-            model: "gpt-4o-mini",
+            model: 'gpt-4o-mini',
             input: [
-                { role: "system", content: "You are a helpful Japanese tutor." },
-                { role: "user", content: prompt }
+                { role: 'system', content: 'You are a helpful Japanese tutor.' },
+                { role: 'user', content: prompt }
             ],
             text: {
                 format: {
-                    type: "json_schema",
-                    name: "wanikani_story_response",
+                    type: 'json_schema',
+                    name: 'wanikani_story_response',
                     strict: true,
                     schema: STORY_SCHEMA
                 }
@@ -90,7 +90,7 @@ export function generateStory(vocab = null, button = null) {
         })
     })
     .then(response => {
-        log("OpenAI response status:", response.status);
+        log('OpenAI response status:', response.status);
         
         // Reset button state now that we have a response
         resetButtonState(button, queueData.queue.length);
@@ -98,16 +98,16 @@ export function generateStory(vocab = null, button = null) {
         if (!response.ok) {
             return response.json().then(
                 errJson => {
-                    let msg = "Story generation failed.\nStatus: " + response.status;
+                    let msg = 'Story generation failed.\nStatus: ' + response.status;
                     if (errJson.error && errJson.error.message) {
-                        msg += "\nMessage: " + errJson.error.message;
+                        msg += '\nMessage: ' + errJson.error.message;
                     }
-                    log("OpenAI error:", errJson);
+                    log('OpenAI error:', errJson);
                     alert(msg);
                     throw new Error(msg);
                 },
                 () => {
-                    const msg = "Story generation failed.\nStatus: " + response.status;
+                    const msg = 'Story generation failed.\nStatus: ' + response.status;
                     alert(msg);
                     throw new Error(msg);
                 }
@@ -117,36 +117,36 @@ export function generateStory(vocab = null, button = null) {
         return response.json();
     })
     .then(json => {
-        log("Full Responses API response:", json);
+        log('Full Responses API response:', json);
         
         // Check response status
-        if (json.status !== "completed") {
-            alert("Story generation failed: response status is " + json.status);
-            log("Incomplete response:", json);
+        if (json.status !== 'completed') {
+            alert('Story generation failed: response status is ' + json.status);
+            log('Incomplete response:', json);
             return;
         }
 
         // Get the first output message
-        const outputMessage = json.output?.find(item => item.type === "message");
+        const outputMessage = json.output?.find(item => item.type === 'message');
         if (!outputMessage) {
-            alert("Story generation failed: no message in response output.");
-            log("Response JSON:", json);
+            alert('Story generation failed: no message in response output.');
+            log('Response JSON:', json);
             return;
         }
         
         // Check for refusal in content
-        const refusalContent = outputMessage.content?.find(c => c.type === "refusal");
+        const refusalContent = outputMessage.content?.find(c => c.type === 'refusal');
         if (refusalContent) {
-            alert("The AI model refused to generate the story:\n" + refusalContent.refusal);
-            log("Model refusal:", refusalContent.refusal);
+            alert('The AI model refused to generate the story:\n' + refusalContent.refusal);
+            log('Model refusal:', refusalContent.refusal);
             return;
         }
         
         // Get output text
-        const textContent = outputMessage.content?.find(c => c.type === "output_text");
+        const textContent = outputMessage.content?.find(c => c.type === 'output_text');
         if (!textContent?.text) {
-            alert("Story generation failed: no text content in response.");
-            log("Response JSON:", json);
+            alert('Story generation failed: no text content in response.');
+            log('Response JSON:', json);
             return;
         }
 
@@ -154,17 +154,17 @@ export function generateStory(vocab = null, button = null) {
         let storyData;
         try {
             storyData = JSON.parse(textContent.text);
-            log("Parsed story data:", storyData);
+            log('Parsed story data:', storyData);
         } catch (e) {
-            alert("Story generation failed: invalid JSON response.");
-            log("JSON parse error:", e, "Content:", textContent.text);
+            alert('Story generation failed: invalid JSON response.');
+            log('JSON parse error:', e, 'Content:', textContent.text);
             return;
         }
 
         // Validate required fields
         if (!storyData.japanese_story || !storyData.english_translation || !storyData.vocabulary_list) {
-            alert("Story generation failed: missing required fields in response.");
-            log("Invalid story data structure:", storyData);
+            alert('Story generation failed: missing required fields in response.');
+            log('Invalid story data structure:', storyData);
             return;
         }
 
@@ -174,10 +174,10 @@ export function generateStory(vocab = null, button = null) {
         // Note: Queue is NOT cleared - vocabulary persists for future stories
     })
     .catch(error => {
-        log("Fetch error:", error);
+        log('Fetch error:', error);
         resetButtonState(button, queueData.queue.length);
-        if (!error.message.includes("Story generation failed")) {
-            alert("Story generation failed (network error). See console for details.");
+        if (!error.message.includes('Story generation failed')) {
+            alert('Story generation failed (network error). See console for details.');
         }
     });
 }

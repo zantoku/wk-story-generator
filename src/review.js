@@ -15,10 +15,10 @@ let reviewInitialized = false;
  */
 function getCurrentWord() {
     const el =
-        document.querySelector(".character-header__characters") ||
-        document.querySelector(".subject-character__characters");
+        document.querySelector('.character-header__characters') ||
+        document.querySelector('.subject-character__characters');
     const word = el?.textContent?.trim();
-    log("Current visible word:", word);
+    log('Current visible word:', word);
     return word || null;
 }
 
@@ -27,9 +27,9 @@ function getCurrentWord() {
  * @returns {Array|null} Queue array or null if not found/invalid
  */
 function getQueue() {
-    const queueRoot = document.querySelector("#quiz-queue");
+    const queueRoot = document.querySelector('#quiz-queue');
     if (!queueRoot || !queueRoot.firstElementChild) {
-        log("No #quiz-queue element found.");
+        log('No #quiz-queue element found.');
         return null;
     }
 
@@ -39,11 +39,11 @@ function getQueue() {
         if (Array.isArray(arr)) {
             return arr;
         } else {
-            log("Queue JSON is not an array:", arr);
+            log('Queue JSON is not an array:', arr);
             return null;
         }
     } catch (e) {
-        console.warn("[WK STORY] Failed to parse queue JSON:", e);
+        console.warn('[WK STORY] Failed to parse queue JSON:', e);
         return null;
     }
 }
@@ -55,13 +55,13 @@ function getQueue() {
  * @returns {Object|null} Matched vocabulary item or null
  */
 function findCurrentItem(word, queue) {
-    if (!word || !queue) return null;
+    if (!word || !queue) {return null;}
     const item = queue.find(
         obj =>
-            (obj.type === "Vocabulary" || obj.type === "KanaVocabulary") &&
+            (obj.type === 'Vocabulary' || obj.type === 'KanaVocabulary') &&
             obj.characters === word
     );
-    log("Matched item for word:", word, "→", item);
+    log('Matched item for word:', word, '→', item);
     return item;
 }
 
@@ -70,31 +70,31 @@ function findCurrentItem(word, queue) {
  * Sets up event listeners for collecting vocabulary during reviews
  */
 export function initReviewPage() {
-    if (reviewInitialized) return;
+    if (reviewInitialized) {return;}
     reviewInitialized = true;
 
-    log("Initializing review capture…");
+    log('Initializing review capture…');
 
     // Load existing queue data
-    let queueData = loadStoredVocab();
+    const queueData = loadStoredVocab();
     // Create a Set of existing words for fast duplicate checking
-    let existingWords = new Set(queueData.queue.map(item => item.word));
+    const existingWords = new Set(queueData.queue.map(item => item.word));
 
-    window.addEventListener("didAnswerQuestion", () => {
-        log("didAnswerQuestion fired → matching visible word with queue…");
+    window.addEventListener('didAnswerQuestion', () => {
+        log('didAnswerQuestion fired → matching visible word with queue…');
 
         const word = getCurrentWord();
         const queue = getQueue();
         const item = findCurrentItem(word, queue);
 
         if (!item) {
-            log("No vocab item found for this answer.");
+            log('No vocab item found for this answer.');
             return;
         }
 
         const slug = item.characters;
         if (!slug) {
-            log("Item has no characters field:", item);
+            log('Item has no characters field:', item);
             return;
         }
 
@@ -109,18 +109,18 @@ export function initReviewPage() {
             queueData.queue.push(vocabItem);
             existingWords.add(slug);
             
-            log("Collected vocab:", slug, "on date:", vocabItem.date);
+            log('Collected vocab:', slug, 'on date:', vocabItem.date);
             
             // Store immediately with capacity enforcement
             storeVocab(queueData, getQueueCapacity());
         } else {
-            log("Vocab already collected, skipping duplicate:", slug);
+            log('Vocab already collected, skipping duplicate:', slug);
         }
     });
 
     // Mark completion → persist vocab for dashboard button
-    window.addEventListener("didCompleteSession", () => {
-        log("didCompleteSession fired — queue size:", queueData.queue.length);
+    window.addEventListener('didCompleteSession', () => {
+        log('didCompleteSession fired — queue size:', queueData.queue.length);
         storeVocab(queueData, getQueueCapacity());
     });
 }

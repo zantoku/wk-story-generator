@@ -13,19 +13,19 @@ import { getTTSVoice, getTTSInstructions, getTTSSpeed } from './storage.js';
  * @throws {Error} If audio generation fails
  */
 export async function generateAudio(text, apiKey) {
-    log("Generating audio for text length:", text.length);
+    log('Generating audio for text length:', text.length);
 
     if (!apiKey) {
-        throw new Error("No API key provided for audio generation");
+        throw new Error('No API key provided for audio generation');
     }
 
     if (!text || text.trim().length === 0) {
-        throw new Error("No text provided for audio generation");
+        throw new Error('No text provided for audio generation');
     }
 
     // Check character limit (4096 for TTS API)
     if (text.length > 4096) {
-        log("Warning: Text exceeds 4096 characters, may be truncated by API");
+        log('Warning: Text exceeds 4096 characters, may be truncated by API');
     }
 
     // Get TTS settings
@@ -33,14 +33,14 @@ export async function generateAudio(text, apiKey) {
     const instructions = getTTSInstructions();
     const speed = getTTSSpeed();
 
-    log("TTS settings:", { voice, instructions, speed });
+    log('TTS settings:', { voice, instructions, speed });
 
     try {
         const requestBody = {
-            model: "gpt-4o-mini-tts",
+            model: 'gpt-4o-mini-tts',
             input: text,
             voice: voice,
-            response_format: "mp3",
+            response_format: 'mp3',
             speed: speed
         };
 
@@ -49,30 +49,30 @@ export async function generateAudio(text, apiKey) {
             requestBody.instructions = instructions.trim();
         }
 
-        const response = await fetch("https://api.openai.com/v1/audio/speech", {
-            method: "POST",
+        const response = await fetch('https://api.openai.com/v1/audio/speech', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + apiKey
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + apiKey
             },
             body: JSON.stringify(requestBody)
         });
 
-        log("Audio API response status:", response.status);
+        log('Audio API response status:', response.status);
 
         if (!response.ok) {
             const errorText = await response.text();
-            log("Audio API error response:", errorText);
+            log('Audio API error response:', errorText);
             throw new Error(`Audio generation failed: ${response.status} ${response.statusText}`);
         }
 
         // Convert response to Blob
         const audioBlob = await response.blob();
-        log("Audio generated successfully, size:", audioBlob.size, "bytes");
+        log('Audio generated successfully, size:', audioBlob.size, 'bytes');
 
         return audioBlob;
     } catch (error) {
-        log("Audio generation error:", error);
+        log('Audio generation error:', error);
         throw error;
     }
 }

@@ -25,8 +25,8 @@ registerDashboardCallbacks(generateStory, openSettingsOverlay);
 registerApiCallbacks(showStoryOverlay, openSettingsOverlay);
 
 // Register settings command in Tampermonkey context menu
-if (typeof GM_registerMenuCommand === "function") {
-    GM_registerMenuCommand("WaniKani Story: Settings", openSettingsOverlay);
+if (typeof GM_registerMenuCommand === 'function') {
+    GM_registerMenuCommand('WaniKani Story: Settings', openSettingsOverlay);
 }
 
 // Start observing URL changes for SPA navigation

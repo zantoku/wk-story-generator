@@ -29,11 +29,11 @@ import { loadStoredVocab, storeVocab } from './queue.js';
  */
 export function getApiKey() {
     try {
-        if (typeof GM_getValue === "function") {
-            return GM_getValue(API_KEY_STORAGE, "") || "";
+        if (typeof GM_getValue === 'function') {
+            return GM_getValue(API_KEY_STORAGE, '') || '';
         }
     } catch (_) {}
-    return "";
+    return '';
 }
 
 /**
@@ -42,8 +42,8 @@ export function getApiKey() {
  */
 export function setApiKey(value) {
     try {
-        if (typeof GM_setValue === "function") {
-            GM_setValue(API_KEY_STORAGE, value || "");
+        if (typeof GM_setValue === 'function') {
+            GM_setValue(API_KEY_STORAGE, value || '');
         }
     } catch (_) {}
 }
@@ -58,7 +58,7 @@ export function setApiKey(value) {
  */
 export function getPrompt() {
     try {
-        if (typeof GM_getValue === "function") {
+        if (typeof GM_getValue === 'function') {
             return GM_getValue(PROMPT_STORAGE, DEFAULT_PROMPT) || DEFAULT_PROMPT;
         }
     } catch (_) {}
@@ -71,7 +71,7 @@ export function getPrompt() {
  */
 export function setPrompt(value) {
     try {
-        if (typeof GM_setValue === "function") {
+        if (typeof GM_setValue === 'function') {
             GM_setValue(PROMPT_STORAGE, value || DEFAULT_PROMPT);
         }
     } catch (_) {}
@@ -87,11 +87,11 @@ export function setPrompt(value) {
  */
 export function getTTSVoice() {
     try {
-        if (typeof GM_getValue === "function") {
-            return GM_getValue(TTS_VOICE_STORAGE, "alloy") || "alloy";
+        if (typeof GM_getValue === 'function') {
+            return GM_getValue(TTS_VOICE_STORAGE, 'alloy') || 'alloy';
         }
     } catch (_) {}
-    return "alloy";
+    return 'alloy';
 }
 
 /**
@@ -100,8 +100,8 @@ export function getTTSVoice() {
  */
 export function setTTSVoice(value) {
     try {
-        if (typeof GM_setValue === "function") {
-            GM_setValue(TTS_VOICE_STORAGE, value || "alloy");
+        if (typeof GM_setValue === 'function') {
+            GM_setValue(TTS_VOICE_STORAGE, value || 'alloy');
         }
     } catch (_) {}
 }
@@ -116,7 +116,7 @@ export function setTTSVoice(value) {
  */
 export function getTTSInstructions() {
     try {
-        if (typeof GM_getValue === "function") {
+        if (typeof GM_getValue === 'function') {
             return GM_getValue(TTS_INSTRUCTIONS_STORAGE, DEFAULT_TTS_INSTRUCTIONS) || DEFAULT_TTS_INSTRUCTIONS;
         }
     } catch (_) {}
@@ -129,7 +129,7 @@ export function getTTSInstructions() {
  */
 export function setTTSInstructions(value) {
     try {
-        if (typeof GM_setValue === "function") {
+        if (typeof GM_setValue === 'function') {
             GM_setValue(TTS_INSTRUCTIONS_STORAGE, value || DEFAULT_TTS_INSTRUCTIONS);
         }
     } catch (_) {}
@@ -145,7 +145,7 @@ export function setTTSInstructions(value) {
  */
 export function getTTSSpeed() {
     try {
-        if (typeof GM_getValue === "function") {
+        if (typeof GM_getValue === 'function') {
             const speed = GM_getValue(TTS_SPEED_STORAGE, 1.0);
             return parseFloat(speed) || 1.0;
         }
@@ -159,7 +159,7 @@ export function getTTSSpeed() {
  */
 export function setTTSSpeed(value) {
     try {
-        if (typeof GM_setValue === "function") {
+        if (typeof GM_setValue === 'function') {
             const speed = parseFloat(value) || 1.0;
             GM_setValue(TTS_SPEED_STORAGE, Math.max(0.5, Math.min(2.0, speed)));
         }
@@ -176,7 +176,7 @@ export function setTTSSpeed(value) {
  */
 export function getQueueCapacity() {
     try {
-        if (typeof GM_getValue === "function") {
+        if (typeof GM_getValue === 'function') {
             const capacity = GM_getValue(QUEUE_CAPACITY_STORAGE, 100);
             const parsed = parseInt(capacity, 10);
             return isNaN(parsed) ? 100 : Math.max(20, Math.min(500, parsed));
@@ -192,7 +192,7 @@ export function getQueueCapacity() {
  */
 export function setQueueCapacity(value) {
     try {
-        if (typeof GM_setValue === "function") {
+        if (typeof GM_setValue === 'function') {
             const capacity = parseInt(value, 10) || 100;
             const clamped = Math.max(20, Math.min(500, capacity));
             GM_setValue(QUEUE_CAPACITY_STORAGE, clamped);
@@ -217,7 +217,7 @@ export function setQueueCapacity(value) {
  */
 export function getWordsPerStory() {
     try {
-        if (typeof GM_getValue === "function") {
+        if (typeof GM_getValue === 'function') {
             const words = GM_getValue(WORDS_PER_STORY_STORAGE, 20);
             const parsed = parseInt(words, 10);
             return isNaN(parsed) ? 20 : Math.max(5, Math.min(100, parsed));
@@ -232,7 +232,7 @@ export function getWordsPerStory() {
  */
 export function setWordsPerStory(value) {
     try {
-        if (typeof GM_setValue === "function") {
+        if (typeof GM_setValue === 'function') {
             const words = parseInt(value, 10) || 20;
             GM_setValue(WORDS_PER_STORY_STORAGE, Math.max(5, Math.min(100, words)));
         }
@@ -249,12 +249,12 @@ export function setWordsPerStory(value) {
  */
 export function getSamplingMode() {
     try {
-        if (typeof GM_getValue === "function") {
-            const mode = GM_getValue(SAMPLING_MODE_STORAGE, "recent");
-            return (mode === "random" || mode === "recent") ? mode : "recent";
+        if (typeof GM_getValue === 'function') {
+            const mode = GM_getValue(SAMPLING_MODE_STORAGE, 'recent');
+            return (mode === 'random' || mode === 'recent') ? mode : 'recent';
         }
     } catch (_) {}
-    return "recent";
+    return 'recent';
 }
 
 /**
@@ -263,8 +263,8 @@ export function getSamplingMode() {
  */
 export function setSamplingMode(value) {
     try {
-        if (typeof GM_setValue === "function") {
-            const mode = (value === "random" || value === "recent") ? value : "recent";
+        if (typeof GM_setValue === 'function') {
+            const mode = (value === 'random' || value === 'recent') ? value : 'recent';
             GM_setValue(SAMPLING_MODE_STORAGE, mode);
         }
     } catch (_) {}

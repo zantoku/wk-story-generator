@@ -37,19 +37,19 @@ export const getDateFromTimestamp = (timestamp) => {
 export const loadStoredVocab = () => {
     try {
         const stored = localStorage.getItem(STORAGE_KEY);
-        if (!stored) return { version: 1, queue: [], stats: { totalCollected: 0, oldestDate: null, newestDate: null } };
+        if (!stored) {return { version: 1, queue: [], stats: { totalCollected: 0, oldestDate: null, newestDate: null } };}
         
         const data = JSON.parse(stored);
         
         // Ensure it has required structure
         if (!data.version || !Array.isArray(data.queue)) {
-            log("Invalid queue structure, resetting");
+            log('Invalid queue structure, resetting');
             return { version: 1, queue: [], stats: { totalCollected: 0, oldestDate: null, newestDate: null } };
         }
         
         return data;
     } catch (e) {
-        log("Error loading vocab queue:", e);
+        log('Error loading vocab queue:', e);
         return { version: 1, queue: [], stats: { totalCollected: 0, oldestDate: null, newestDate: null } };
     }
 };
@@ -61,7 +61,7 @@ export const loadStoredVocab = () => {
  * @returns {Array} Trimmed queue
  */
 export const enforceQueueCapacity = (queue, maxCapacity) => {
-    if (queue.length <= maxCapacity) return queue;
+    if (queue.length <= maxCapacity) {return queue;}
     
     // Remove oldest items (FIFO)
     const itemsToRemove = queue.length - maxCapacity;
@@ -116,7 +116,7 @@ export const storeVocab = (queueData, maxCapacity = 100) => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
         log(`Stored queue: ${trimmedQueue.length} words, dates ${stats.oldestDate} to ${stats.newestDate}`);
     } catch (e) {
-        log("Error storing vocab queue:", e);
+        log('Error storing vocab queue:', e);
     }
 };
 
@@ -125,7 +125,7 @@ export const storeVocab = (queueData, maxCapacity = 100) => {
  */
 export const clearStoredVocab = () => {
     localStorage.removeItem(STORAGE_KEY);
-    log("Cleared vocab queue");
+    log('Cleared vocab queue');
 };
 
 // ---------------------------------------------------------------------
@@ -141,7 +141,7 @@ export const clearStoredVocab = () => {
  */
 export function selectVocabularyForStory(queue, wordsPerStory, samplingMode) {
     if (!queue || queue.length === 0) {
-        log("No vocabulary in queue");
+        log('No vocabulary in queue');
         return [];
     }
 
@@ -158,7 +158,7 @@ export function selectVocabularyForStory(queue, wordsPerStory, samplingMode) {
     }
     
     // Need to add more words beyond today
-    if (samplingMode === "recent") {
+    if (samplingMode === 'recent') {
         // Sort by timestamp descending (newest first)
         const sortedQueue = [...queue].sort((a, b) => b.timestamp - a.timestamp);
         
@@ -167,7 +167,7 @@ export function selectVocabularyForStory(queue, wordsPerStory, samplingMode) {
         log(`Selected ${selected.length} most recent words (${todayWords.length} from today, ${selected.length - todayWords.length} older)`);
         
         return selected.map(item => item.word);
-    } else if (samplingMode === "random") {
+    } else if (samplingMode === 'random') {
         // Separate today's words from older words
         const olderWords = queue.filter(item => item.date !== currentDate);
         
@@ -198,7 +198,7 @@ export function selectVocabularyForStory(queue, wordsPerStory, samplingMode) {
     }
     
     // Fallback: return all available words
-    log("Unknown sampling mode, returning all words");
+    log('Unknown sampling mode, returning all words');
     return queue.map(item => item.word);
 }
 
@@ -214,7 +214,7 @@ export function getSelectionStats(queue, selectedWords) {
             totalInQueue: 0,
             selectedCount: 0,
             todayCount: 0,
-            dateRange: "No vocabulary yet",
+            dateRange: 'No vocabulary yet',
             samplingMode: getSamplingMode()
         };
     }
@@ -229,7 +229,7 @@ export function getSelectionStats(queue, selectedWords) {
     
     // Format dates nicely
     const formatDate = (dateStr) => {
-        const date = new Date(dateStr + "T00:00:00");
+        const date = new Date(dateStr + 'T00:00:00');
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     };
     
