@@ -1,7 +1,7 @@
 # WaniKani Review Story Generator
 
-[![Version](https://img.shields.io/badge/version-5.0.0-blue.svg)](https://github.com/your-username/wkstory)
-[![License](https://img.shields.io/badge/license-ISC-green.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/your-username/wkstory)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 A Tampermonkey userscript that enhances the WaniKani vocabulary review experience by collecting reviewed vocabulary and generating personalized Japanese stories with AI-powered audio narration.
 

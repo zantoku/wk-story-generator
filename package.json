@@ -1,6 +1,6 @@
 {
   "name": "wkstory",
-  "version": "5.0.0",
+  "version": "1.0.0",
   "description": "Tampermonkey script to generate AI stories on Wanikani.com",
   "type": "module",
   "main": "dist/wkstory.user.js",

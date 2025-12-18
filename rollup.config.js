@@ -4,11 +4,10 @@ import metablock from 'rollup-plugin-userscript-metablock';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-// Tampermonkey metadata
+// Tampermonkey metadata (version automatically pulled from package.json)
 const metadata = {
   name: 'WaniKani Review Story Generator',
   namespace: 'karsten.wanikani.story',
-  version: '5.0',
   description: 'Collect vocab during reviews and generate a story afterward',
   author: 'Karsten Rohweder',
   match: 'https://www.wanikani.com/*',
